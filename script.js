@@ -37,6 +37,60 @@ const createMyOwnEle = (eleTag, parent, txtContent = null, classes = null) => {
   return myNewElement;
 };
 
+
+const actions = (users, user, form, input, type, message) => {
+    form.style.display = (form.style.display === "none")?"block":"none";
+  
+    if(user.remaining==="you don't have money"){
+     user.remaining=0
+    }
+    user.remaining = parseInt(user.remaining);
+    if (input.value === "") {
+      input.value = 0;
+    } else if (type === "add to balance") {
+  
+      if (input.value >= 5000) {
+        message.innerText ="enter amount which is less than 5000";
+        form.style.display = "block";
+        return;
+      }
+      else{
+        user.remaining += parseInt(input.value);
+        user.operations.opeType+='added '
+        user.operations.opeValue+=`${input.value} `
+        writeToStorage(users);
+        readFromStorage();
+        draw(users);
+      }
+    
+    } else if (type === "withdraw") {
+      if (input.value > user.remaining) {
+        message.innerText =
+          "you don't have enough money please enter less amount";
+        form.style.display = "block";
+        return;
+      } else {
+        
+        if(parseInt(input.value)===user.remaining){
+          user.remaining="you don't have money"
+          writeToStorage(users);
+          readFromStorage();
+          draw(users);
+        }
+        else{
+          user.remaining -= parseInt(input.value);
+          user.operations.opeType+='withdraw '
+          user.operations.opeValue+=`${input.value} `
+          writeToStorage(users);
+          readFromStorage();
+          draw(users);
+        }
+       
+      }
+    }
+  };
+
+
 if (addForm) {
   addForm.addEventListener("submit", function (e) {
     e.preventDefault();
@@ -64,6 +118,10 @@ const draw = (users) => {
 
     let td = createMyOwnEle("td", tr);
 
+    let form = createMyOwnEle("form", td);
+    const editInput = createMyOwnEle("input", form, "", "form-control");
+    let message = createMyOwnEle("div", form,`enter the value of money then select the process you want`);
+    form.style.display = "none";
 
     let addBalance = createMyOwnEle(
       "button",
@@ -71,7 +129,9 @@ const draw = (users) => {
       "add balance",
       "btn btn-success mx-2"
     );
-
+    addBalance.addEventListener("click", () => {
+        actions(users, users[i], form, editInput, "add to balance", message);
+      });
     
 
     let withdraw = createMyOwnEle(
@@ -80,7 +140,9 @@ const draw = (users) => {
       "withdraw",
       "btn btn-danger mx-2"
     );
-  
+    withdraw.addEventListener("click", () => {
+        actions(users, users[i], form, editInput, "withdraw", message);
+      });
 
     let show = createMyOwnEle(
       "button",
