@@ -1,6 +1,7 @@
 const taskHeads = ["name", "balance"];
 const addForm = document.querySelector("#addForm");
 const dataWrap = document.querySelector("#dataWrap");
+const showSingleCustomer = document.querySelector("#single");
 
 const readFromStorage = (key = "users", dataType = "array") => {
   let data;
@@ -29,6 +30,7 @@ const createUserObject = (addForm) => {
   });
   return user;
 };
+
 const createMyOwnEle = (eleTag, parent, txtContent = null, classes = null) => {
   const myNewElement = document.createElement(eleTag);
   if (classes) myNewElement.classList = classes;
@@ -37,6 +39,10 @@ const createMyOwnEle = (eleTag, parent, txtContent = null, classes = null) => {
   return myNewElement;
 };
 
+const showSingle = (user) => {
+    writeToStorage(user, "user");
+    window.location.href = "singleUser.html";
+  };
 
 const actions = (users, user, form, input, type, message) => {
     form.style.display = (form.style.display === "none")?"block":"none";
@@ -126,7 +132,7 @@ const draw = (users) => {
     let addBalance = createMyOwnEle(
       "button",
       td,
-      "add balance",
+      "Deposit",
       "btn btn-success mx-2"
     );
     addBalance.addEventListener("click", () => {
@@ -150,7 +156,7 @@ const draw = (users) => {
       "show operations",
       "btn btn-primary mx-2"
     );
-    
+    show.addEventListener("click", () => showSingle(users[i]));
   });
 };
 
@@ -158,3 +164,31 @@ if (dataWrap) {
   const users = readFromStorage();
   draw(users);
 }
+
+if (showSingleCustomer) {
+    let users = readFromStorage();
+    let user = readFromStorage("user", "object");
+    if (users.length === 0) {
+      createMyOwnEle("div", single, "no data to show", "alert alert-danger");
+      user = {};
+    } else {
+      createMyOwnEle(
+        "div",
+        single,
+        `${user.name}`,
+        "alert alert-primary"
+      );
+      createMyOwnEle(
+        "div",
+        single,
+        `${user.operations.opeType} `,
+        "alert alert-primary"
+      );
+      createMyOwnEle(
+        "div",
+        single,
+        `${user.operations.opeValue} `,
+        "alert alert-primary"
+      );
+    }
+  }
