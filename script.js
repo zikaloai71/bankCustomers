@@ -3,7 +3,7 @@ const addForm = document.querySelector("#addForm");
 const dataWrap = document.querySelector("#dataWrap");
 const showSingleCustomer = document.querySelector("#single");
 
-const readFromStorage = (key = "users", dataType = "array") => {
+const readFromStorage = (key = "bankCustomers", dataType = "array") => {
   let data;
   try {
     data = JSON.parse(localStorage.getItem(key)) || [];
@@ -15,7 +15,7 @@ const readFromStorage = (key = "users", dataType = "array") => {
   return data;
 };
 
-const writeToStorage = (data, key = "users") => {
+const writeToStorage = (data, key = "bankCustomers") => {
   localStorage.setItem(key, JSON.stringify(data));
 };
 
@@ -40,7 +40,7 @@ const createMyOwnEle = (eleTag, parent, txtContent = null, classes = null) => {
 };
 
 const showSingle = (user) => {
-    writeToStorage(user, "user");
+    writeToStorage(user, "bankUser");
     window.location.href = "singleUser.html";
   };
 
@@ -167,8 +167,9 @@ if (dataWrap) {
 
 if (showSingleCustomer) {
     let users = readFromStorage();
-    let user = readFromStorage("user", "object");
-    if (users.length === 0) {
+    let user = readFromStorage("bankUser", "object");
+    if (users.length === 0 || user.operations.opeType === "") {
+    
       createMyOwnEle("div", single, "no data to show", "alert alert-danger");
       user = {};
     } else {
